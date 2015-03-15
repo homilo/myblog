@@ -106,33 +106,47 @@
 
     <div class="post-comment">
         <h3>Leave a Comment</h3>
-        <form role="form" action="#">
-            <div class="form-group">
-                <label class="control-label">Name
-                <span class="required">
-                     *
-                </span>
-                </label>
-                <input class="form-control" type="text">
-            </div>
-            <div class="form-group">
-                <label class="control-label">Email
-                <span class="required">
-                     *
-                </span>
-                </label>
-                <input class="form-control" type="text">
-            </div>
-            <div class="form-group">
-                <label class="control-label">Message
-                <span class="required">
-                     *
-                </span>
-                </label>
-                <textarea class="col-md-10 form-control" rows="8"></textarea>
-            </div>
+        {{ Form::open(array('route' => 'comments.store', 'method' =>'post')) }}
+            {{ Form::hidden('post_id', $post->id) }}
+            {{ Form::hidden('reply_id', 0) }}
+            @if( Auth::check() )
+                {{ Form::hidden('user_id', $user_id) }}
+                <div class="form-group">
+                    <label class="control-label">Message
+                    <span class="required">
+                         *
+                    </span>
+                    </label>
+                    <textarea class="col-md-10 form-control" name="content" rows="8"></textarea>
+                </div>
+            @else
+                <div class="form-group">
+                    <label class="control-label">Name
+                    <span class="required">
+                         *
+                    </span>
+                    </label>
+                    <input class="form-control" name="name" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Email
+                    <span class="required">
+                         *
+                    </span>
+                    </label>
+                    <input class="form-control" name="email" type="email">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Message
+                    <span class="required">
+                         *
+                    </span>
+                    </label>
+                    <textarea class="col-md-10 form-control" name="content" rows="8"></textarea>
+                </div>
+            @endif
             <button class="btn btn-primary" type="submit" style="margin-top:20px;">Post a Comment</button>
-        </form>
+        {{ Form::close() }}
     </div>
 
   </div>

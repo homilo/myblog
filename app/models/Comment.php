@@ -8,7 +8,6 @@ class Comment extends \Eloquent {
 
 	public static $rules = [
 		'content' => 'required|min:10',
-		'user_id' => 'required',
 		'post_id' => 'required'
 	];
 

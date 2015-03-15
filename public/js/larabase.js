@@ -233,6 +233,32 @@ if(jQuery('table#admin-posts-datatable').length > 0) { //checks if div element e
     });
 }
 
+// Comments DataTable
+if(jQuery('table#admin-comments-datatable').length > 0) { //checks if div element exists
+    $(function(){
+        $('table#admin-comments-datatable').dataTable( {
+            "autoWidth": false,
+            "scrollX": true,
+            "dom": 'T<"clear">lfrtip',
+            "oLanguage": {
+                "sSearch": "", //remove label for search box
+                "oPaginate": { "sFirst": "First", "sLast": "Last", "sNext": ">", "sPrevious": "<" }, // pagination
+                "sLengthMenu": "_MENU_" // no label
+            },
+            "stateSave": true, // user preferences are saved even on page reload
+            "tableTools": {
+                "sSwfPath": "../js/datatables/copy_csv_xls_pdf.swf",
+                "aButtons": [ "csv","xls","pdf","print"]
+            },
+            "lengthMenu": [[10 ,10, 25, 50, -1], ['Show', 10, 25, 50, "All"]],
+            "data": dataset,
+            "columns": columns,
+        });
+        $('.dataTables_filter input').removeClass('input-sm').addClass('input').attr("placeholder", "Search");
+        $('.dataTables_length select').removeClass('input-sm').addClass('input');
+    });
+}
+
 /*
  ***********************************
  Tags

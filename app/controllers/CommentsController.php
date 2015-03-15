@@ -32,13 +32,56 @@ class CommentsController extends \BaseController {
 	 */
 	public function store()
 	{
-		$validator = Comment::validate($data = Input::all());
-        if ($validator->fails())
-        {
-            return Redirect::back()->withErrors($validator)->withInput();
-        }
-        Comment::create($data);
-        return Redirect::route('posts.index')->withSuccess(Lang::get('larabase.comment_created'));
+		$id = 0;
+
+		if ( Auth::check() ) 
+		{
+			// Validator for User comment
+			$validator_ucomment = Comment::validate($data_ucomment = Input::all());
+
+			if ($validator_ucomment->fails())
+	        {
+	            return Redirect::back()->withErrors($validator_ucomment)->withInput();
+	        }
+
+	        // print_r($data_ucomment); exit();
+
+	        Comment::create([
+	        	'post_id' 	=> $data_ucomment['post_id'],
+	        	'reply_id' 	=> $data_ucomment['reply_id'],
+	        	'content' 	=> $data_ucomment['content'],
+	        	'user_id' 	=> $data_ucomment['user_id']
+	        ]);
+
+	        $id = $data_ucomment['post_id'];
+		} 
+		else 
+		{
+			// Validator for Guest comment
+			$validator_gcomment = Guestcomment::validate($data_gcomment = Input::all());
+
+			if ( $validator_gcomment->fails() )
+	        {
+	            return Redirect::back()->withErrors($validator_gcomment)->withInput();
+	        }
+
+	        print_r($data_gcomment['email']); exit();
+	        $comment = Comment::create([
+	        	'post_id' 	=> $data_gcomment['post_id'], 
+	        	'content' 	=> $data_gcomment['content']
+	        ]);
+
+	        Guestcomment::create([
+	        	'comment_id'	=> $comment->id,
+	        	'name'			=> $data_gcomment['name'],
+	        	// 'website' 		=> $data_gcomment['website'],
+	        	'email' 		=> $data_gcomment['email']
+	        ]);
+
+	        $id = $data_gcomment['post_id'];
+		}
+        
+        return Redirect::route("posts.show", $id)->withSuccess(Lang::get('larabase.comment_created'));
 	}
 
 	/**

@@ -72,6 +72,8 @@ Route::group(['before' => 'auth|role:admin','prefix' => 'admin'], function()
         Route::get('api/posts',        'PostsController@postsApi');
         Route::resource('roles',       'RolesController', ['except'=> ['show', 'create']]);
         Route::resource('permissions', 'PermissionsController', ['except'=> ['show', 'create']]);
+        // me
+        Route::get('comments',         'CommentsController@comments');
     });
     Route::resource('tags',       'TagsController', ['except'=> ['show', 'create']]);
     Route::resource('categories', 'CategoriesController', ['except'=> ['show', 'create']]);
