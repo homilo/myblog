@@ -21,21 +21,28 @@
 
 @section('footer-js')
 <script>
+    console.log({{$comments}});
+
+    var status_confirmed = '<span class="label label-warning">confirmed</span>';
+    var status_pending = '<span class="label label-warning">pending</span>';
 
     var dataset = [
-    @foreach($comments as $comment)
-    [ "{{ $comment->content }}",
-      "{{ $comment->status }}"
-    ],
-    @endforeach
+        @foreach($comments as $comment)
+        [ "{{ $comment->content }}",
+          "{{ $comment->reply_id }}",
+          "{{ $comment->created_at }}",
+          '{{ $comment->status == 1 ? "<span class=\"label label-info\">confirmed</span>" : "<span class=\"label label-warning\">pending</span>" }}',
+          '{{ $comment->status == 0 ? "<button type=\"button\" class=\"btn btn-xs btn-success\" data-id=\"$comment->id\">confirmed</button>" : "<button type=\"button\" class=\"btn btn-xs btn-danger\">delete</button>" }}',
+        ],
+        @endforeach
     ];
 
 
     var columns = [
         { "title": "Content", "class": "text-center" },
-        { "title": "Status", "class": "text-center" },
-        { "title": "Created at", "class": "text-center" },
         { "title": "Reply", "class": "text-center" },
+        { "title": "Created at", "class": "text-center" },
+        { "title": "Status", "class": "text-center" },
         { "title": "Action", "class": "text-center"}
     ];
 

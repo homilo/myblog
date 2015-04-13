@@ -27,7 +27,7 @@
                         <li class="{{ active('admin/posts') }}"><a href="{{ URL::to('admin/posts') }}">Posts</a></li>
                         <li class="{{ active('admin/tags') }}"><a href="{{ URL::to('admin/tags') }}">Tags</a></li>
                         <li class="{{ active('admin/categories') }}"><a href="{{ URL::to('admin/categories') }}">Categories</a></li>
-                        <li class="{{ active('admin/categories') }}"><a href="{{ URL::to('admin/comments') }}">Comments</a></li>
+                        <li class="{{ active('admin/comments') }}"><a href="{{ URL::to('admin/comments') }}">Comments</a></li>
                     </ul>
                 </li>
                 @endif
