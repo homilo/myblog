@@ -7,6 +7,9 @@
 @stop
 
 @section('content')
+<div>
+    <a class="btn btn-sm btn-success pull-right" href="{{ URL::to('posts/create') }}"><i class="fa fa-plus-circle"></i> Create Post</a>
+</div>
 
 <div class="panel panel-default">
     <div class="panel-heading">

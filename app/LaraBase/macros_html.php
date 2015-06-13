@@ -84,3 +84,29 @@ HTML::macro('deleteAccountModal', function($modalID)
             </div>
         </div>';
 });
+
+// Update Modal
+HTML::macro('updateModal', function($modalID, $resource, $resource_name, $resource_id)
+{
+    $form_open = Form::open(['route' => [''.$resource.'.update', $resource_id], 'method' => 'PUT']);
+    $form_submit = Form::submitField("Update", "btn btn-success");
+    $form_close =  Form::close();
+    return '<div class="modal fade" id="'.$modalID.'" tabindex="-1" role="dialog" aria-labelledby="updateModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="deleteModal">Update '.$resource_name.'</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Are you sure you want to permanently update this '.$resource_name.'?</h4>
+                        <br>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
+                        '.$form_open.'
+                        '.$form_submit.'
+                        '.$form_close.'
+                    </div>
+                </div>
+            </div>
+        </div>';
+});

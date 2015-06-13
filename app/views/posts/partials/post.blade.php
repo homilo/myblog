@@ -3,7 +3,7 @@
 
         <div class="row">
 			<div class="col-md-4 blog-img blog-tag-data">
-				<img src="http://m.f13.img.vnecdn.net/2015/02/11/ty-1-4122-1423644018.jpg" alt="" class="img-responsive" style="margin-bottom: 12px;">
+				<img src="{{ post_image_url($post->image) }}" alt="" class="img-responsive" style="margin-bottom: 12px;">
 				<ul class="list-inline" style="font-size: 14px;">
 					<li>
 						<i class="fa fa-calendar"></i>

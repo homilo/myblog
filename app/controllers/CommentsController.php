@@ -33,7 +33,7 @@ class CommentsController extends \BaseController {
 	public function store()
 	{
 		$id = 0;
-
+		// commenter is user
 		if ( Auth::check() ) 
 		{
 			// Validator for User comment
@@ -44,20 +44,19 @@ class CommentsController extends \BaseController {
 	            return Redirect::back()->withErrors($validator_ucomment)->withInput();
 	        }
 
-	        // print_r($data_ucomment); exit();
-
-	        Comment::create([
-	        	'post_id' 	=> $data_ucomment['post_id'],
-	        	'reply_id' 	=> $data_ucomment['reply_id'],
-	        	'content' 	=> $data_ucomment['content'],
-	        	'user_id' 	=> $data_ucomment['user_id']
-	        ]);
+	        $comment = new Comment;
+	        $comment->post_id = $data_ucomment['post_id'];
+	        $comment->reply_id = $data_ucomment['reply_id'];
+	        $comment->content = $data_ucomment['content'];
+	        $comment->user_id = $data_ucomment['user_id'];
+	        $comment->save();
 
 	        $id = $data_ucomment['post_id'];
 		} 
+		// Commenter is guest
 		else 
 		{
-			// Validator for Guest comment
+			// 1. Validator for Guest comment
 			$validator_gcomment = Guestcomment::validate($data_gcomment = Input::all());
 
 			if ( $validator_gcomment->fails() )
@@ -65,18 +64,43 @@ class CommentsController extends \BaseController {
 	            return Redirect::back()->withErrors($validator_gcomment)->withInput();
 	        }
 
-	        print_r($data_gcomment['email']); exit();
-	        $comment = Comment::create([
-	        	'post_id' 	=> $data_gcomment['post_id'], 
-	        	'content' 	=> $data_gcomment['content']
-	        ]);
+	        // 2. Check guest email has exist?
+	        $checkEmail = User::where('email', '=', $data_gcomment['email'])->get()->toArray();
 
-	        Guestcomment::create([
-	        	'comment_id'	=> $comment->id,
-	        	'name'			=> $data_gcomment['name'],
-	        	// 'website' 		=> $data_gcomment['website'],
-	        	'email' 		=> $data_gcomment['email']
-	        ]);
+	        $isEmailExist = count($checkEmail) == 0 ? false : true;
+
+	        // print_r($checkEmail); exit();
+
+	        if( $isEmailExist == false ) {
+	        	// 2.1. Create new user + profile
+	        	$user = new User;
+	        	$user->username = str_replace("@", "_", $data_gcomment['email']);
+	        	$user->email = $data_gcomment['email'];
+	        	$user->type = 0; // type is guest
+	        	$user->save();
+
+	        	$user_id = $user->id;
+
+	        	$profile = new Profile;
+	        	$profile->first_name = $data_gcomment['name'];
+	        	$profile->last_name = "[guest]";
+	        	$profile->user_id = $user_id;
+	        	$profile->save();
+
+	        } else {
+	        	$user_id = $checkEmail[0]["id"];
+	        }
+
+	        // 3. Update first name IF field NAME different empty + usertype is GUEST
+
+
+
+	        // 4. Create new comment
+	        $comment = new Comment;
+	        $comment->post_id = $data_gcomment['post_id'];
+	        $comment->content = $data_gcomment['content'];
+	        $comment->user_id = $user_id;
+	        $comment->save();
 
 	        $id = $data_gcomment['post_id'];
 		}

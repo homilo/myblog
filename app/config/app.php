@@ -123,6 +123,8 @@ return array(
         'Illuminate\Workbench\WorkbenchServiceProvider',
         // LaraBase
         'Way\Generators\GeneratorsServiceProvider',
+        // Kết nối mạng xã hội
+        'Laravel\Socialite\SocialiteServiceProvider',
 	),
 
 	/*
@@ -190,7 +192,9 @@ return array(
         'Validator'         => 'Illuminate\Support\Facades\Validator',
         'View'              => 'Illuminate\Support\Facades\View',
         // LaraBase
-        
+
+        // Kết nối mạng xã hội
+        'Socialite' 		=> 'Laravel\Socialite\Facades\Socialite',
 	),
 	
 );

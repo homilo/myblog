@@ -51,6 +51,7 @@ Route::filter('auth', function()
 {
     if (Auth::guest())
     {
+        // print_r("expression"); exit();
         return Redirect::guest('login')->withInfo(Lang::get('larabase.only_auth'));
     }
 });

@@ -21,8 +21,8 @@
                     <td>{{ $category->description }}</td>
                     <td class="col-md-2">
                         <a class="btn btn-xs btn-default" href="{{ route('admin.categories.edit', $category->id) }}"><i class="fa fa-edit"></i> Edit</a>
-                        <button class="btn btn-xs btn-danger" data-toggle="modal" data-target="#{{ $category->name }}"><i class="fa fa-trash-o"></i> Delete</button>
-                        {{ HTML::deleteModal($category->name,'admin.categories','Category', $category->id) }}
+                        <button class="btn btn-xs btn-danger" data-toggle="modal" data-target="#cat_{{ $category->id }}"><i class="fa fa-trash-o"></i> Delete</button>
+                        {{ HTML::deleteModal('cat_' . $category->id,'admin.categories','Category', $category->id) }}
                     </td>
                 </tr>
                 @empty
@@ -39,6 +39,7 @@
 
 <h3>Add New Category</h3>
 
+
 <div class="col-md-6">
     {{ Form::open(['route' => 'admin.categories.store', 'method' =>'post', 'class' => 'form-horizontal']) }}
 
@@ -50,5 +51,4 @@
 
     {{ Form::close() }}
 </div>
-
 @stop

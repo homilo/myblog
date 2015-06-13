@@ -8,7 +8,9 @@ class PostsController extends \BaseController {
      */
     public function __construct()
     {
-        $this->beforeFilter('auth', ['except' => ['index', 'show', 'postsForTag']]);
+        // Check Auth trước khi thực thi các hàm phía dưới, except là ngoại trừ 
+        $this->beforeFilter('auth', ['except' => ['index', 'show', 'postsForTag', 'postsForCategory', 'postsForSearch', 'postsForUser']]);
+
         $this->beforeFilter('resource_owner', ['only' => ['edit', 'update', 'destroy']]);
     }
 
@@ -53,6 +55,23 @@ class PostsController extends \BaseController {
         $tag = Tag::where('name', $tag_name)->firstOrFail();
         $posts = $tag->posts()->orderBy('updated_at', 'desc')->paginate(5);
         return View::make('posts.post_tag', compact('posts', 'tag_name'));
+    }
+
+    /**
+     * Display a list of posts for a Search
+     * Update 02/05/2015 Loi
+     */
+    public function postsForSearch()
+    {
+        $key_search = Input::get('key_search');
+        $posts = Post::whereRaw("MATCH(title,content) AGAINST(? IN BOOLEAN MODE)", [$key_search] )->paginate(5);
+        
+        // foreach ($posts as $post) {
+        //     $title = $post->title;
+        //     $post->title = str_replace($key_search, '<b>'. $key_search .'</b>', $title);
+        // }
+
+        return View::make('posts.post_search', compact('posts', 'key_search'));
     }
 
     /**
@@ -102,7 +121,8 @@ class PostsController extends \BaseController {
         
         $post = Post::with('user')->find($id);
         // $comments = Comment::with('user.profile')->where('post_id', '=', $id)->get();
-        $comments = Comment::with('children')->where('post_id', '=', $id)->get();
+        // $comments = Comment::with('children')->where('post_id', '=', $id)->get();
+        $comments = Comment::with('children')->whereRaw('post_id = ? and status = 1', array($id))->get();
 
         return View::make('posts.show', compact('user_id', 'post', 'comments'));
     }
@@ -154,4 +174,76 @@ class PostsController extends \BaseController {
         return Redirect::route('posts.index')->withInfo(Lang::get('larabase.post_deleted'));
     }
 
+    // Upload new Category Image
+    /*
+     * Update 02/05/2015 Loi
+     */
+    public function uploadPostImage($id)
+    {
+        if (Input::hasFile('image'))
+        {
+            $validator = Validator::make(['image' => $image = Input::file('image')],['image' => 'image|mimes:jpeg,bmp,png|max:2048']);
+            if ($validator->fails())
+            {
+                return Redirect::back()->withInput()->withErrors($validator);
+            }
+
+            $post = Post::find($id);
+
+            if($post->image) {
+                $oldFile = public_path('uploads/posts_img/').$post->image;
+                File::delete($oldFile);
+            }
+
+            // $filename = time() .'-'. $image->getClientOriginalName();
+
+            $filename = $image->getClientOriginalName();
+            $extension = File::extension($filename);
+
+            $filename = str_replace(' ', '_', $post->title);
+            $filename = preg_replace( '([^a-zA-Z0-9_])', '', $filename );
+            $filename = $filename . '_' . time() . '.' . $extension; 
+
+            $image->move('uploads/posts_img', $filename);
+
+            $post->image = $filename;
+            $post->save();
+            return Redirect::back()->withSuccess(Lang::get('larabase.post_updated'));
+        }
+        return Redirect::back();
+    }
+
+    // Upload Content Image of Post
+    /*
+     * Hình ảnh trong nội dung của bài viết
+     * Update 17/05/2015 Loi
+     */
+    // public function uploadContentImage() {
+
+        // $validator = Validator::make(['image' => $image = Input::file('file')],['image' => 'image|mimes:jpeg,bmp,png|max:2048']);
+        // if ($validator->fails())
+        // {
+        //     return;
+        // }
+
+        // $post = Post::find($id);
+
+        // $filename = $image->getClientOriginalName();
+        // $extension = File::extension($filename);
+
+        // $filename = str_replace(' ', '_', $post->title);
+        // $filename = preg_replace( '([^a-zA-Z0-9_])', '', $filename );
+        // $filename = $filename . '_' . time() . '.' . $extension; 
+
+        // $image->move('uploads/posts_img', $filename);
+
+        // // print_r(public_path("uploads/posts_img") . $filename);
+        // // exit();
+
+        // // Generate response.
+        // $response = new StdClass;
+        // $response->link = public_path("uploads/posts_img") . $filename;
+        // echo stripslashes(json_encode($response));
+
+    // }
 }

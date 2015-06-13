@@ -15,6 +15,54 @@ class AuthController extends \BaseController {
 	public function processSignUp()
 	{
 		$data = Input::all();
+
+		/*
+		 * Update 2015/04/29 Loi
+		 * Nếu email đã tồn tại và là email của guest thì chỉ cập nhật lại thành user
+		 */
+		$checkEmail = User::whereRaw("email = ? and type = 0", array($data['email']))->get();
+		if( count($checkEmail) > 0 ) {
+
+			// check username
+			if( $checkEmail[0]["username"] == $data["username"] ) {
+			    $validator = Validator::make($data, [
+			        'password' => 'required|min:8',
+			        'password_confirm' => 'required|same:password'
+			    ]);
+
+			} else {
+				$validator = Validator::make($data, [
+			        'username'  => 'required|unique:users|min:3',
+			        'password' => 'required|min:8',
+			        'password_confirm' => 'required|same:password'
+			    ]);
+			}
+
+			if ($validator->fails()) {
+				return Redirect::back()->withErrors($validator)->withInput(Input::except('password', 'password_confirm'));
+			}
+
+			$code = str_random(32);
+
+			$user = User::find( $checkEmail[0]["id"] );
+			$user->username = $data["username"];
+			$user->password = Hash::make($data['password']);
+			$user->activation_code = $code;
+			$user->save();
+
+			$user->assignMemberRole();
+			Throttle::create(['user_id'=> $user->id]);
+
+			$activation_link = URL::route('activate', $code);
+
+			Mail::send('emails.users.activate', ['link' => $activation_link, 'username' => Input::get('username')], function($message) use($user) {
+				$message->to($user->email, $user->username)->subject('Activate Your Account');
+			});
+
+			return Redirect::to('login')->withActivationMessage(Lang::get('larabase.signup_success'));
+		} 
+		/*------------------------------------------------*/
+
 		$validator = User::validate_registration($data);
 		if ($validator->fails()) {
 			return Redirect::back()->withErrors($validator)->withInput(Input::except('password', 'password_confirm'));

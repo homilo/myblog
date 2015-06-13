@@ -30,3 +30,19 @@ function cancel_button($text = "Cancel")
 {
     return "<a href=' " . URL::previous() . " ' class='btn btn-default pull-right'>$text</a>";
 }
+
+// Generate the url for given Image
+// Used in categories>edit.blade.php
+// Update 01/05/2015 Loi
+function cat_image_url($filename)
+{
+    return asset('/uploads/categories_img/'. $filename);
+}
+
+// Generate the url for given Image
+// Used in post>edit.blade.php
+// Update 02/05/2015 Loi
+function post_image_url($filename)
+{
+    return asset('/uploads/posts_img/'. $filename);
+}

@@ -8,10 +8,16 @@ Route::pattern('id', '\d+');
 Route::when('*', 'csrf', ['post', 'put', 'delete']);
 
 // Posts
-Route::resource('posts',            'PostsController');
+Route::resource('posts', 'PostsController');
+
+// Update 01/05/2015 Loi
+Route::post('post/upload-post-image/{id}', 'PostsController@uploadPostImage');
+Route::post('post/upload-content-image/{id}', 'PostsController@uploadContentImage');
+
 Route::get('posts/tag/{name}',      'PostsController@postsForTag');
 Route::get('posts/category/{name}', 'PostsController@postsForCategory');
 Route::get('posts/user/{username}', 'PostsController@postsForUser');
+Route::post('posts/search', ['as' => 'posts.search', 'uses' => 'PostsController@postsForSearch']); // Update 02/05/2015 Loi
 
 // Comments
 Route::resource('comments', 'CommentsController');
@@ -73,10 +79,15 @@ Route::group(['before' => 'auth|role:admin','prefix' => 'admin'], function()
         Route::resource('roles',       'RolesController', ['except'=> ['show', 'create']]);
         Route::resource('permissions', 'PermissionsController', ['except'=> ['show', 'create']]);
         // me
-        Route::get('comments',         'CommentsController@comments');
+        Route::resource('comments',    'CommentsController');
+
     });
     Route::resource('tags',       'TagsController', ['except'=> ['show', 'create']]);
     Route::resource('categories', 'CategoriesController', ['except'=> ['show', 'create']]);
+
+    // Update 01/05/2015 Loi
+    Route::post('category/upload-category-image/{id}', 'CategoriesController@uploadCategoryImage');
+    
 });
 
 
@@ -101,3 +112,9 @@ Route::get('hello', 'DevController@hello');
         var_dump($query);
     });
 }*/
+
+
+// Redirect to github to authenticate
+Route::get('facebook', 'AccountController@github_redirect');
+// Get back to redirect url
+Route::get('account/facebook', 'AccountController@github');

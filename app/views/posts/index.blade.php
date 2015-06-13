@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('content')
-<a class="btn btn-sm btn-success pull-right hidden" href="{{ URL::to('posts/create') }}"><i class="fa fa-plus-circle"></i> Create Post</a>
 <!-- <h1>Blog</h1> -->
 
 <hr>

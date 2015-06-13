@@ -34,11 +34,14 @@
                 @endif
             </ul>
 
-            <form class="navbar-form navbar-left" role="search">
+            <div class="search">
+                {{ Form::model(null, ['route' => ['posts.search'], 'class'=>'navbar-form navbar-left', 'role'=>"search"]) }}
                 <div class="form-group">
-                    <input class="form-control" placeholder="Search" type="text">
+                    {{ Form::text('key_search', null, array( 'placeholder' => 'Search...', 'class'=>"form-control" )) }}
+                    {{-- {{ Form::submit('Search') }} --}}
                 </div>
-            </form>
+                {{ Form::close() }}
+            </div>
 
             <ul class="nav navbar-nav navbar-left">
                 @if(Auth::guest())

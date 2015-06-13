@@ -1,4 +1,10 @@
 @extends('layouts.master')
+
+@section('header-js')
+    {{ HTML::style('plugins/highlight/prism.css') }}
+    {{ HTML::style('plugins/froala_editor_1.2.7/css/froala_editor.min.css') }}
+@stop
+
 @section('content')
 
 <div class="panel panel-default">
@@ -14,6 +20,8 @@
         {{ mb_strtoupper($post->updated_at->diffForHumans()) }} |
         <a href="{{ url("/users/{$post->user->username}") }}">{{ mb_strtoupper($post->user->full_name) }}</a>
     </p>
+
+    
 
     <p>{{ $post->content }}</p>
 
@@ -156,4 +164,5 @@
 
 @section('footer-js')
     {{ HTML::script('js/core/posts/show.js') }}
+    {{ HTML::script('plugins/highlight/prism.js') }}
 @stop
